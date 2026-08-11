@@ -14,13 +14,10 @@ public class BookController {
         this.bookService = bookService;
     }
 
-    @GetMapping("/book")
-    public Book getBook(){
-        return new Book(367,"sidhf","dsga",54658);
-    }
+
     @PostMapping("/books")
-    public ResponseEntity<Book> createBook(@RequestBody Book book){
-        Optional<Book> savedBook = bookService.createBook(book);
+    public ResponseEntity<BookDto> createBook(@RequestBody BookDto bookDto){
+        Optional<BookDto> savedBook = bookService.createBook(bookDto);
         if (savedBook.isPresent()) {
             return ResponseEntity.status(HttpStatus.CREATED).body(savedBook.get());
         }
@@ -28,10 +25,16 @@ public class BookController {
             return ResponseEntity.badRequest().build();
         }
     }
-
-    @GetMapping("/books/search")
-    public String getSearchAuthor(@RequestParam String author){
-        return "Поиск книг автора:" + author;
+    @GetMapping("/book/{id}/dto")
+    public ResponseEntity<BookDto> getBookDtoById(@PathVariable int id){
+        Optional<BookDto> foundBook = bookService.getBookDto(id);
+        if (foundBook.isPresent()){
+            BookDto bookDto = foundBook.get();
+            return ResponseEntity.ok(bookDto);
+        }
+        else{
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @GetMapping("/books/all")
@@ -39,16 +42,7 @@ public class BookController {
         List<Book> allBooks = bookService.getBooks();
       return ResponseEntity.ok(allBooks);
     }
-    @GetMapping("/books/{id}")
-    public ResponseEntity<Book> getBookById(@PathVariable int id){
-        Optional<Book> foundBook = bookService.getBook(id);
-        if (foundBook.isPresent()) {
-            return ResponseEntity.ok(foundBook.get());
-        }
-        else{
-            return ResponseEntity.notFound().build();
-        }
-    }
+
     @DeleteMapping("/books/{id}")
     public ResponseEntity<Void> deleteBookById(@PathVariable int id){
         Book foundBook = bookService.deleteBook(id);
