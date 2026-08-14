@@ -11,8 +11,7 @@ public class BookMapper {
                 , book.getYear());
     }
     public Book toBook(BookDto bookDto){
-        return new Book(bookDto.getId(),
-                bookDto.getTitle(),
+        return new Book(bookDto.getTitle(),
                 bookDto.getAuthor(),
                 bookDto.getYear());
     }

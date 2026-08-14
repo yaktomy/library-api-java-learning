@@ -2,6 +2,7 @@ package org.example.library_api;
 
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,35 +16,41 @@ public class BookService {
     }
     public Optional<BookDto> createBook(BookDto bookDto){
         Book gotBook = bookMapper.toBook(bookDto);
-        Optional<Book> creatingBook = getBook(gotBook.getId());
-        if (creatingBook.isPresent()){
-            return Optional.empty();
-        }
-        else {
             Book savedBook = bookRepository.save(gotBook);
             return Optional.of(bookMapper.toDto(savedBook));
-        }
+
     }
-    public List<Book> getBooks(){
-        return bookRepository.findAll();
+    public List<BookDto> getBooks(){
+        return bookRepository.findAll()
+                .stream().map(bookMapper::toDto)
+                .toList();
+
     }
     public Optional<Book> getBook(int id){
-        return bookRepository.getBook(id);
+        return bookRepository.findById(id);
     }
     public Optional<BookDto> getBookDto(int id){
-        Optional<Book> book = bookRepository.getBook(id);
-        if (book.isPresent()){
-            Book foundBook = book.get();
-           return Optional.of(bookMapper.toDto(foundBook));
-        }
-        else{
-            return Optional.empty();
-        }
+        return bookRepository.findById(id)
+                .map(bookMapper :: toDto);
     }
     public Book deleteBook(int id){
-        return bookRepository.deleteBook(id);
+       if (bookRepository.existsById(id)){
+           Optional<Book> foundBook = bookRepository.findById(id);
+           Book book = foundBook.get();
+           bookRepository.deleteById(book.getId());
+           return book;
+       }
+       return null;
     }
     public Book updateBook(int id, Book book){
-        return bookRepository.updateBook( id, book);
+        Optional<Book> foundBook = bookRepository.findById(id);
+        if (foundBook.isPresent()){
+            Book existingBook = foundBook.get();
+            existingBook.setTitle(book.getTitle());
+            existingBook.setAuthor(book.getAuthor());
+            existingBook.setYear(book.getYear());
+            return existingBook;
+        }
+        return null;
     }
 }

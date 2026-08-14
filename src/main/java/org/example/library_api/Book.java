@@ -1,16 +1,21 @@
 package org.example.library_api;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
 @Entity
 public class Book {
     @Id
-    private int id;
+    @GeneratedValue (strategy = GenerationType.IDENTITY)
+    private Integer id;
     private String title;
     private String author;
     private int year;
-    public Book(int id, String title, String author, int year){
-        this.id = id;
+    protected Book(){
+
+    }
+    public Book(String title, String author, int year){
         this.title = title;
         this.author = author;
         this.year = year;

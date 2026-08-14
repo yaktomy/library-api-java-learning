@@ -1,17 +1,20 @@
 package org.example.library_api;
 
 public class BookDto {
-    private int id;
+    private Integer id;
     private String title;
     private String author;
     private int year;
-    public BookDto(int id, String title, String author, int year){
+    protected BookDto(){
+
+    }
+    public BookDto(Integer id, String title, String author, int year){
         this.id = id;
         this.title = title;
         this.author = author;
         this.year = year;
     }
-    public int getId(){
+    public Integer getId(){
         return id;
     }
     public String getTitle(){
