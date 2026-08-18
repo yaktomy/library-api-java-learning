@@ -1,5 +1,7 @@
 package org.example.library_api;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,7 +16,6 @@ public class BookController {
         this.bookService = bookService;
     }
 
-
     @PostMapping("/books")
     public ResponseEntity<BookDto> createBook(@RequestBody BookDto bookDto){
         Optional<BookDto> savedBook = bookService.createBook(bookDto);
@@ -25,6 +26,15 @@ public class BookController {
             return ResponseEntity.badRequest().build();
         }
     }
+    @GetMapping("/books/search/year")
+    public ResponseEntity<List<BookDto>> getBooksYearGreaterThan(@RequestParam int year){
+        return ResponseEntity.ok(bookService.getBooksYearGreaterThan(year));
+    }
+    @GetMapping("/books/search/title")
+    public ResponseEntity<List<BookDto>> getBooksTitleContaining(@RequestParam String titlePart){
+        return ResponseEntity.ok(bookService.getBooksTitleContaining(titlePart));
+    }
+
     @GetMapping("/book/{id}/dto")
     public ResponseEntity<BookDto> getBookDtoById(@PathVariable int id){
         Optional<BookDto> foundBook = bookService.getBookDto(id);
@@ -37,12 +47,39 @@ public class BookController {
         }
     }
 
-    @GetMapping("/books/all")
-    public ResponseEntity<List<BookDto>> getAllBooks(){
-        List<BookDto> allBooks = bookService.getBooks();
-      return ResponseEntity.ok(allBooks);
+    @GetMapping("/books")
+    public ResponseEntity<List<BookDto>> getAllBooks(
+            @RequestParam(required = false) String author,
+            @RequestParam(required = false) Integer year)
+    {
+        if (author != null && year != null){
+            return ResponseEntity.ok(bookService.getBooksByAuthorAndYear(author,year));
+        }
+        if (author!=null){
+            return ResponseEntity.ok(bookService.getBooksByAuthor(author));
+        }
+      return ResponseEntity.ok(bookService.getBooks());
     }
-
+    @GetMapping("/books/search")
+    public ResponseEntity<List<BookDto>> getBooksByYearBetween(
+            @RequestParam(required = false) Integer from,
+            @RequestParam(required = false) Integer to,
+            @RequestParam(required = false) String title
+    ) {
+        if (title != null) {
+            return ResponseEntity.ok(bookService.getBooksByTitle(title));
+        } else {
+            return ResponseEntity.ok(bookService.getBooksByYearBetween(from, to));
+        }
+    }
+    @GetMapping("/books/page")
+    public ResponseEntity<Page<BookDto>> getBooksPage(@RequestParam(required = false) String author,
+                                                      Pageable pageable){
+        if (author!=null){
+            return ResponseEntity.ok(bookService.getBooksByAuthorPage(author, pageable));
+        }
+        return ResponseEntity.ok(bookService.getBooksPage(pageable));
+    }
     @DeleteMapping("/books/{id}")
     public ResponseEntity<Void> deleteBookById(@PathVariable int id){
         Book foundBook = bookService.deleteBook(id);
