@@ -1,8 +1,5 @@
 package org.example.library_api;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 @Entity
 public class Book {
@@ -10,23 +7,25 @@ public class Book {
     @GeneratedValue (strategy = GenerationType.IDENTITY)
     private Integer id;
     private String title;
-    private String author;
+    @ManyToOne
+    @JoinColumn(name = "author_id")
+    private Author author;
     private int year;
     protected Book(){
 
     }
-    public Book(String title, String author, int year){
+    public Book(String title, Author author, int year){
         this.title = title;
         this.author = author;
         this.year = year;
     }
-    public int getId(){
+    public Integer getId(){
         return id;
     }
     public String getTitle(){
         return title;
     }
-    public String getAuthor(){
+    public Author getAuthor(){
         return author;
     }
     public int getYear(){
@@ -35,7 +34,7 @@ public class Book {
     public void setTitle(String title){
         this.title = title;
     }
-    public void setAuthor(String author){
+    public void setAuthor(Author author){
         this.author = author;
     }
     public void setYear(int year){

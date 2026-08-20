@@ -1,14 +1,14 @@
 package org.example.library_api;
 
-public class BookDto {
+public class BookResponse {
     private Integer id;
     private String title;
     private String author;
     private int year;
-    protected BookDto(){
+    protected BookResponse(){
 
     }
-    public BookDto(Integer id, String title, String author, int year){
+    public BookResponse(Integer id, String title, String author, int year){
         this.id = id;
         this.title = title;
         this.author = author;

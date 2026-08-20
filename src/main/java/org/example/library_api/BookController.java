@@ -17,8 +17,8 @@ public class BookController {
     }
 
     @PostMapping("/books")
-    public ResponseEntity<BookDto> createBook(@RequestBody BookDto bookDto){
-        Optional<BookDto> savedBook = bookService.createBook(bookDto);
+    public ResponseEntity<BookResponse> createBook(@RequestBody BookResponse bookResponse){
+        Optional<BookResponse> savedBook = bookService.createBook(bookResponse);
         if (savedBook.isPresent()) {
             return ResponseEntity.status(HttpStatus.CREATED).body(savedBook.get());
         }
@@ -27,20 +27,20 @@ public class BookController {
         }
     }
     @GetMapping("/books/search/year")
-    public ResponseEntity<List<BookDto>> getBooksYearGreaterThan(@RequestParam int year){
+    public ResponseEntity<List<BookResponse>> getBooksYearGreaterThan(@RequestParam int year){
         return ResponseEntity.ok(bookService.getBooksYearGreaterThan(year));
     }
     @GetMapping("/books/search/title")
-    public ResponseEntity<List<BookDto>> getBooksTitleContaining(@RequestParam String titlePart){
+    public ResponseEntity<List<BookResponse>> getBooksTitleContaining(@RequestParam String titlePart){
         return ResponseEntity.ok(bookService.getBooksTitleContaining(titlePart));
     }
 
     @GetMapping("/book/{id}/dto")
-    public ResponseEntity<BookDto> getBookDtoById(@PathVariable int id){
-        Optional<BookDto> foundBook = bookService.getBookDto(id);
+    public ResponseEntity<BookResponse> getBookDtoById(@PathVariable int id){
+        Optional<BookResponse> foundBook = bookService.getBookDto(id);
         if (foundBook.isPresent()){
-            BookDto bookDto = foundBook.get();
-            return ResponseEntity.ok(bookDto);
+            BookResponse bookResponse = foundBook.get();
+            return ResponseEntity.ok(bookResponse);
         }
         else{
             return ResponseEntity.notFound().build();
@@ -48,7 +48,7 @@ public class BookController {
     }
 
     @GetMapping("/books")
-    public ResponseEntity<List<BookDto>> getAllBooks(
+    public ResponseEntity<List<BookResponse>> getAllBooks(
             @RequestParam(required = false) String author,
             @RequestParam(required = false) Integer year)
     {
@@ -61,7 +61,7 @@ public class BookController {
       return ResponseEntity.ok(bookService.getBooks());
     }
     @GetMapping("/books/search")
-    public ResponseEntity<List<BookDto>> getBooksByYearBetween(
+    public ResponseEntity<List<BookResponse>> getBooksByYearBetween(
             @RequestParam(required = false) Integer from,
             @RequestParam(required = false) Integer to,
             @RequestParam(required = false) String title
@@ -73,8 +73,8 @@ public class BookController {
         }
     }
     @GetMapping("/books/page")
-    public ResponseEntity<Page<BookDto>> getBooksPage(@RequestParam(required = false) String author,
-                                                      Pageable pageable){
+    public ResponseEntity<Page<BookResponse>> getBooksPage(@RequestParam(required = false) String author,
+                                                           Pageable pageable){
         if (author!=null){
             return ResponseEntity.ok(bookService.getBooksByAuthorPage(author, pageable));
         }
